@@ -20,11 +20,9 @@ python3 main.py --source ./logs_test --niveau ERROR --dest ./backups --retention
 - `rapport.py` : Génération JSON.
 - `archiver.py` : Compression et nettoyage.
 
-## 5. Planification Cron
-Pour exécuter le script tous les dimanches à 03h00 :
-```cron
-0 3 * * 0 /usr/bin/python3 /chemin/absolu/vers/main.py --source /chemin/logs --niveau ALL >> /var/log/loganalyzer.log 2>&1
-```
+## 5. Planification via Cron
+Pour exécuter automatiquement l'outil tous les dimanches à 03h00, ajoutez la ligne suivante à votre crontab (`crontab -e`) :
+
+0 3 * * 0 /usr/bin/python3 /chemin/absolu/vers/loganalyzer/main.py --source /chemin/absolu/vers/logs_test --dest /chemin/absolu/vers/backups
 
 ## 6. Répartition des tâches
-Voir le fichier `info.md` à la racine du projet.
