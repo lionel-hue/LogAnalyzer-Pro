@@ -11,7 +11,7 @@ import platform
 import getpass
 from collections import Counter
 
-# Chemin absolu de base du projet
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def analyser_logs(source, niveau):
@@ -42,18 +42,18 @@ def analyser_logs(source, niveau):
                     stats["total_lignes"] += 1
                     
                     # 3. Parser les lignes (Format : YYYY-MM-DD HH:MM:SS NIVEAU Message)
-                    # On découpe la ligne en 4 parties maximum
+                    
                     parties = ligne.strip().split(' ', 3)
                     
                     if len(parties) >= 4:
-                        log_niveau = parties[2]   # Récupère le NIVEAU (INFO, ERROR...)
-                        message = parties[3]      # Récupère le MESSAGE
+                        log_niveau = parties[2]   
+                        message = parties[3]      
                         
                         # 4. Calculer les stats et filtrer
                         if niveau == "ALL" or log_niveau == niveau:
                             stats["comptage_niveaux"][log_niveau] += 1
                             
-                            # On garde les messages d'erreur pour le Top 5
+                            
                             if log_niveau == "ERROR":
                                 toutes_les_erreurs.append(message)
                                 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     print(f"   ANALYSE DU DOSSIER : {dossier}")
     print("="*40)
     
-    # Appel de TA fonction de Membre 2
+    
     resultat = analyser_logs(dossier, "ALL")
     
     if resultat["total_lignes"] == 0:
