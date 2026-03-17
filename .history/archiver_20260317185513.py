@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Archivage et Nettoyage.
+Module 3 — Archivage et Nettoyage.
 Archive les fichiers .log traités en .tar.gz, déplace l'archive,
 et supprime les anciens rapports JSON selon la politique de rétention.
 """
