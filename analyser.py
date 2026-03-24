@@ -29,7 +29,8 @@ def analyser_logs(source, niveau):
             "total": 0,
             "ERROR": 0,
             "WARN": 0,
-            "INFO": 0
+            "INFO": 0,
+            "top5_erreurs": []  # AJOUT : Champ requis par le spec
         },
         "fichiers_traites": []
     }
@@ -38,7 +39,6 @@ def analyser_logs(source, niveau):
     comptage_niveaux = Counter()
 
     # 2. Utilisation de glob pour scanner les .log (Exigence Membre 2)
-    # On s'assure que le motif utilise le chemin tel quel (peut être relatif ou absolu)
     motif = os.path.join(source, "*.log")
     fichiers_log = glob.glob(motif)
 
@@ -50,21 +50,27 @@ def analyser_logs(source, niveau):
         try:
             with open(chemin_fichier, 'r', encoding='utf-8') as f:
                 for ligne in f:
-                    stats["statistiques"]["total"] += 1
-                    
                     # 3. Parser les lignes (Format : YYYY-MM-DD HH:MM:SS NIVEAU Message)
-                    # split(' ', 3) sépare Date, Heure, Niveau, et le reste (Message)
                     parties = ligne.strip().split(' ', 3)
                     
                     if len(parties) >= 4:
                         log_niveau = parties[2]
                         message = parties[3]
                         
-                        # 4. Calculer les stats et filtrer
-                        # On compte tout pour les statistiques globales
+                        # 4. Filtrage par niveau (AJOUT)
+                        # Si le niveau n'est pas ALL et ne correspond pas, on saute la ligne
+                        if niveau != 'ALL' and log_niveau != niveau:
+                            continue
+
+                        # On compte tout pour les statistiques globales (sur les lignes filtrées)
+                        stats["statistiques"]["total"] += 1
+                        
                         if log_niveau in ["ERROR", "WARN", "INFO"]:
                             comptage_niveaux[log_niveau] += 1
-                            
+                        
+                        # On collecte toujours les erreurs pour le Top 5 (même si filtré par WARN, on garde trace si presente)
+                        # Note: Si filtré par WARN, log_niveau != ERROR, donc cette ligne ne s'exécute pas.
+                        # C'est cohérent avec "stats sur les logs analysés".
                         if log_niveau == "ERROR":
                             toutes_les_erreurs.append(message)
                             
@@ -76,18 +82,18 @@ def analyser_logs(source, niveau):
     stats["statistiques"]["WARN"] = comptage_niveaux.get("WARN", 0)
     stats["statistiques"]["INFO"] = comptage_niveaux.get("INFO", 0)
     
-    # Note: Le top 5 des erreurs est calculé mais stocké séparément si besoin, 
-    # ici on se concentre sur la structure JSON demandée.
-    
+    # 5. Calcul du Top 5 des erreurs (AJOUT)
+    top5 = Counter(toutes_les_erreurs).most_common(5)
+    stats["statistiques"]["top5_erreurs"] = [msg for msg, count in top5]
+
     return stats
 
 if __name__ == "__main__":
     dossier = "logs_test"
-    print(f"\n" + "="*40)
+    print("\n" + "="*40)
     print(f" ANALYSE DU DOSSIER : {dossier}")
     print("="*40)
     resultat = analyser_logs(dossier, "ALL")
-    
     if resultat["statistiques"]["total"] == 0:
         print("⚠ Attention : Aucune ligne lue. Vérifie tes fichiers .log !")
     else:
