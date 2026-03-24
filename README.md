@@ -7,7 +7,7 @@ Ce projet valide la maîtrise des bibliothèques standard de Python appliquées 
 ## 2. Prérequis et installation
 - Python 3.x installé.
 - Aucune dépendance externe (Bibliothèque standard uniquement).
-- Cloner le dépôt : `git clone [url]`
+- Cloner le dépôt : `git clone https://github.com/lionel-hue/LogAnalyzer-Pro`
 
 ## 3. Utilisation
 Exemple de commande :
