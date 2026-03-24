@@ -26,6 +26,7 @@ def generer_rapport(statistiques, source, dossier_sortie):
     chemin_complet = os.path.join(dossier_abs, nom_fichier)
 
     # Construction du rapport final pour matcher l'exemple backups/rapport_*.json
+    # Note: statistiques.get("statistiques") contient maintenant top5_erreurs grâce à analyser.py
     rapport_final = {
         "metadata": {
             "os": statistiques.get("metadata", {}).get("os", "Unknown"),
