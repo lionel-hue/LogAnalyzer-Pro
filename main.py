@@ -11,7 +11,7 @@ import os
 # Imports des modules collaborateurs
 import analyser
 import rapport
-# import archiver # TODO: Décommenter lorsque le module Membre 4 sera prêt
+import archiver  # ✅ Décommenté pour intégration
 
 # Chemin absolu de base du projet
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -47,23 +47,24 @@ def main():
         # 1. Analyse (Module Collaborateur 2)
         print(">> Étape 1 : Analyse des logs...")
         stats = analyser.analyser_logs(source_abs, args.niveau)
-        
         total_logs = stats.get("statistiques", {}).get("total", 0)
         nb_fichiers = len(stats.get("fichiers_traites", []))
-        
-        print(f" Succès : {total_logs} lignes analysées dans {nb_fichiers} fichiers.")
+        print(f"   Succès : {total_logs} lignes analysées dans {nb_fichiers} fichiers.")
 
         # 2. Rapport (Module Collaborateur 3)
         print(">> Étape 2 : Génération du rapport...")
         chemin_rapport = rapport.generer_rapport(stats, source_abs, dest_abs)
-        print(f" Succès : Rapport créé à {chemin_rapport}")
+        print(f"   Succès : Rapport créé à {chemin_rapport}")
 
-        # 3. Archivage (Module Collaborateur 4 - En attente)
-        # On laisse la trace de l'intégration future pour respecter la répartition des tâches
+        # 3. Archivage (Module Collaborateur 4) ✅ Intégré
         print(">> Étape 3 : Archivage...")
-        print(" Info : Module archiver.py en attente d'implémentation (Membre 4).")
-        # archiver.archiver_logs([chemin_rapport], dest_abs)
+        # On archive les fichiers LOGS traités (pas le rapport JSON lui-même selon spec Module 3)
+        archiver.archiver_logs(stats["fichiers_traites"], dest_abs)
         
+        # 4. Nettoyage (Module Collaborateur 4) ✅ Intégré
+        print(">> Étape 4 : Nettoyage des anciens rapports...")
+        archiver.nettoyer_anciens_rapports(dest_abs, args.retention)
+
         print("-" * 40)
         print("\nPipeline terminé avec succès.")
 
